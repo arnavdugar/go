@@ -1,17 +1,26 @@
-.board {
-
+.grid {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
 }
 
 .piece {
-    r: 15;
-    stroke: "black";
-    stroke-width: "1";
+    fill: transparent;
+    r: 12;
+    stroke: black;
+    stroke-width: 0;
+}
+
+.none:hover {
+    fill: grey;
 }
 
 .white {
-    fill: "white";
+    fill: white;
+    stroke-width: 1;
 }
 
 .black {
-    fill: "black";
+    fill: black;
+    stroke-width: 1;
 }
