@@ -38,6 +38,8 @@ function GoGame() {
   }
 }
 
+GoGame.prototype.gameState = GAME_STATE_CONTINUE;
+
 GoGame.prototype.boardState = new Array(ROWS);
 
 GoGame.prototype.turnNumber = 1;
@@ -50,19 +52,35 @@ GoGame.prototype.turnTaken = false;
 
 GoGame.prototype.getBoardState = function() {
   'use strict';
-  return this.gameState;
+  return this.boardState;
 };
 
 GoGame.prototype.placePiece = function(x, y) {
   'use strict';
-  if(!this.turnTaken && this.boardState[x][y] === PLAYER_NONE){
+  if(this.turnTaken){
+    return false;
+  } else if (x < 0 || x >= ROWS || y < 0 || y >= COLS){
+    return false;
+  } else if(this.boardState[x][y] !== PLAYER_NONE){
+    return false;
+  } else{
     this.boardState[x][y] = player;
     this.passCount = 0;
     thus.turnTaken = true;
     return true;
-  } else{
-    return false;
   }
+};
+
+GoGame.prototype.getPieceAtPosition = function(x, y) {
+  'use strict';
+  if (true){
+
+  }
+};
+
+GoGame.prototype.removeDead = function(x, y, player) {
+  'use strict';
+
 };
 
 GoGame.prototype.passTurn = function() {
@@ -86,6 +104,17 @@ GoGame.prototype.startTurn = function() {
 
 GoGame.prototype.endTurn = function() {
   'use strict';
+  if(!this.turnTaken){
+    this.passTurn();
+  }
+  if(this.passCount >= 2){
+    this.gameState = GAME_STATE_OVER;
+  } else{
+    this.turnNumber += 1;
+    this.turnPlayer =
+      (this.turnNumber === PLAYER_WHITE ? PLAYER_BLACK : PLAYER_WHITE);
+    this.turnTaken = false;
+  }
   return {
     gameState: this.gameState
   };
