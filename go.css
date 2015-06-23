@@ -1,7 +1,7 @@
 .grid {
     fill: none;
-    stroke: black;
     shape-rendering: crispEdges;
+    stroke: black;
 }
 
 .piece {
