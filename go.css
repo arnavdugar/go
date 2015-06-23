@@ -1,3 +1,11 @@
+.board {
+    position: absolute;
+    left: 50%;
+    margin-left: -350px;
+    margin-top: -350px;
+    top: 50%;
+}
+
 .grid {
     fill: none;
     shape-rendering: crispEdges;
@@ -6,13 +14,13 @@
 
 .piece {
     fill: transparent;
-    r: 12;
     stroke: black;
     stroke-width: 0;
+    transition-duration: 0.3s;
 }
 
 .none:hover {
-    fill: grey;
+    fill: #ccc;
 }
 
 .white {
