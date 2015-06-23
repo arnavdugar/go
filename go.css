@@ -1,0 +1,17 @@
+.board {
+
+}
+
+.piece {
+    r: 15;
+    stroke: "black";
+    stroke-width: "1";
+}
+
+.white {
+    fill: "white";
+}
+
+.black {
+    fill: "black";
+}
