@@ -2,27 +2,26 @@ board_width = 700;
 board_height = 700;
 grid_size = 8;
 
-var Board = React.createClass({
+var BoardComponent = React.createClass({
     getInitialState: function() {
-        var state = {};
-        for(var i = 0; i < grid_size * grid_size; i++) {
-            state[i] = 0;
-        }
+        var state = {
+            grid_size: this.props.board.state[0].length,
+        };
         return state;
     },
     render: function() {
         var pieces = [];
-        for(var x = 0; x < grid_size; x++) {
-            for(var y = 0; y < grid_size; y++) {
-                var index = grid_size * y + x;
-                if(this.state[index] == 0) {
-                    var color = "none";
-                } else if(this.state[index] == 1) {
-                    var color = "white";
-                } else if(this.state[index] == 2) {
-                    var color = "black";
+        for(var x = 0; x < this.state.grid_size; x++) {
+            for(var y = 0; y < this.state.grid_size; y++) {
+                var color;
+                if(this.props.board.state[x][y] === 0) {
+                    color = "none";
+                } else if(this.props.board.state[x][y] === 1) {
+                    color = "black";
+                } else if(this.props.board.state[x][y] === 2) {
+                    color = "white";
                 }
-                pieces.push(<Piece key={"p" + index} x={x} y={y} color={color}
+                pieces.push(<Piece key={"p" + x.toString() + "," + y.toString()} x={x} y={y} color={color}
                     onClickHandler={this.onPieceClick}/>);
             }
         }
@@ -47,12 +46,12 @@ var Board = React.createClass({
     },
     onPieceClick: function(x, y) {
         console.log(x, y)
-        var index = y * grid_size + x;
-        this.setState(function(previousState, currentProps) {
-            var obj = {};
-            obj[index] = (previousState[index] + 1) % 3;
-            return obj;
-        });
+        if(typeof this.props.onPieceClickCallback !== 'undefined') {
+            this.props.onPieceClickCallback(x, y, this);
+        }
+    },
+    redraw: function() {
+        this.setState(this.state);
     }
 });
 
@@ -65,6 +64,3 @@ var Piece = React.createClass({
             onClick={this.props.onClickHandler.bind(null, this.props.x, this.props.y)}></circle>);
     }
 });
-
-React.render(<Board/>, document.getElementById('content'));
-

@@ -7,9 +7,44 @@
         <!-- React Libraries -->
         <script src="react.js"></script>
         <script src="transformer.js"></script>
+
+        <script src="othello.js"></script>
     </head>
     <body>
+        <div height="500px">
+            <h1 align="center">Othello</h1>
+            <div align="center" id="subtitle"></div>
+        </div>
         <div id="content"></div>
         <script src="go.jsx" type="text/jsx"></script>
+        <script type="text/jsx">
+        var game = new OthelloController();
+        var board = game.board;
+        var SubtitleComponent = React.createClass({
+            getInitialState: function() {
+                return {text:this.props.text};
+            },
+            render: function() {
+                return (<span>{this.state.text}</span>);
+            },
+            setText: function(text) {
+                this.setState({text: text});
+            }
+        });
+        var subComp = React.render(<SubtitleComponent text={'Turn 1, Black. Black 2, White 2.'} />, document.getElementById('subtitle'));
+        var place = function(x, y, comp) {
+            if(game.placePiece(x,y)){
+                comp.redraw();
+                var status = (game.gameState === GAME_STATE_CONTINUE ?
+                    'Turn ' + game.turnNumber + ', ' +
+                    (game.turnPlayer === PLAYER_BLACK ? 'Black. ' : 'White. ') :
+                    'Game Over. ');
+                var counts = "Black " + game.counts[PLAYER_BLACK] + ", White " + game.counts[PLAYER_WHITE];
+                subComp.setText(status + counts);
+            }
+        };
+        var boardComp = React.render(<BoardComponent board={board} onPieceClickCallback={place} />, document.getElementById('content'));
+
+        </script>
     </body>
 </html>
