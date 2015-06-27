@@ -50,15 +50,55 @@ Board.prototype.getCounts = function() {
   return counts;
 };
 
-function OthelloController() {
+function OthelloController(initialState) {
   'use strict';
+  if(typeof initialState === 'undefined'){
+    initialState = this.initialState;
+  }
   this.board = new Board(8,8,PLAYER_NONE);
-  this.board.state[3][3] = PLAYER_BLACK;
-  this.board.state[3][4] = PLAYER_WHITE;
-  this.board.state[4][3] = PLAYER_WHITE;
-  this.board.state[4][4] = PLAYER_BLACK;
+  this.applyState(initialState);
   this.counts = this.board.getCounts();
 }
+
+OthelloController.prototype.applyState = function(boardState) {
+  'use strict';
+  if(typeof boardState === 'undefined'){
+    boardState = {};
+  }
+  if(typeof boardState.moves === 'undefined'){
+    boardState.moves = [];
+  }
+  for(var i = 0; i < 8; i++){
+    for(var j = 0; j < 8; j++){
+      this.board.state[i][j] = PLAYER_NONE;
+    }
+  }
+  for (var k = 0; k < boardState.moves.length; k++) {
+    var move = boardState.moves[k];
+    this.board.state[move.x][move.y] = move.player;
+  }
+  this.turnNumber = (typeof boardState.turnNumber !== 'undefined' ?
+    boardState.turnNumber : 1);
+  this.turnPlayer = (typeof boardState.turnPlayer !== 'undefined' ?
+    boardState.turnPlayer : PLAYER_BLACK);
+  this.passCount = (typeof boardState.passCount !== 'undefined' ?
+    boardState.passCount : 0);
+  this.gameState = (typeof boardState.gameState !== 'undefined' ?
+    boardState.gameState : GAME_STATE_CONTINUE);
+};
+
+OthelloController.prototype.initialState = {
+  moves: [
+    {x: 3, y: 3, player: PLAYER_BLACK},
+    {x: 3, y: 4, player: PLAYER_WHITE},
+    {x: 4, y: 3, player: PLAYER_WHITE},
+    {x: 4, y: 4, player: PLAYER_BLACK}
+  ],
+  turnNumber: 1,
+  turnPlayer: PLAYER_BLACK,
+  passCount: 0,
+  gameState: GAME_STATE_CONTINUE
+};
 
 OthelloController.prototype.turnNumber = 1;
 OthelloController.prototype.turnPlayer = PLAYER_BLACK;
@@ -67,9 +107,17 @@ OthelloController.prototype.counts = {};
 OthelloController.prototype.passCount = 0;
 
 OthelloController.prototype.startTurn = function() {
+  if(this.gameState === GAME_STATE_OVER){
+    return {
+      turnNumber: this.turnNumber,
+      turnPlayer: this.turnPlayer,
+      counts: this.counts,
+      gameState: this.gameState
+    };
+  }
   var canPlay = false;
   for(var i = 0; i < 8; i++){
-    for(var j = 0; j < 8; k++){
+    for(var j = 0; j < 8; j++){
       if(this.tryToPlacePiece(i,j)){
         canPlay = true;
         break;
@@ -79,8 +127,8 @@ OthelloController.prototype.startTurn = function() {
   if(canPlay){
     this.passCount = 0;
     return {
-      turnNumber: turnNumber,
-      turnPlayer: turnPlayer,
+      turnNumber: this.turnNumber,
+      turnPlayer: this.turnPlayer,
       counts: this.counts,
       gameState: this.gameState
     };
@@ -90,8 +138,8 @@ OthelloController.prototype.startTurn = function() {
       this.gameState = GAME_STATE_OVER;
       this.counts = this.board.getCounts();
       return {
-        turnNumber: turnNumber,
-        turnPlayer: turnPlayer,
+        turnNumber: this.turnNumber,
+        turnPlayer: this.turnPlayer,
         counts: this.counts,
         gameState: this.gameState
       };

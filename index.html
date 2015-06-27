@@ -18,6 +18,15 @@
         <div id="content"></div>
         <script src="go.jsx" type="text/jsx"></script>
         <script type="text/jsx">
+        var scenario = {
+            moves: [
+                {x:0, y:0, player:PLAYER_BLACK},
+                {x:0, y:1, player:PLAYER_WHITE},
+            ],
+            turnNumber: 6,
+            turnPlayer: PLAYER_WHITE,
+            gameState: GAME_STATE_OVER
+        };
         var game = new OthelloController();
         var board = game.board;
         var SubtitleComponent = React.createClass({
@@ -35,16 +44,20 @@
         var place = function(x, y, comp) {
             if(game.placePiece(x,y)){
                 comp.redraw();
-                var status = (game.gameState === GAME_STATE_CONTINUE ?
-                    'Turn ' + game.turnNumber + ', ' +
-                    (game.turnPlayer === PLAYER_BLACK ? 'Black. ' : 'White. ') :
-                    'Game Over. ');
-                var counts = "Black " + game.counts[PLAYER_BLACK] + ", White " + game.counts[PLAYER_WHITE];
-                subComp.setText(status + counts);
+                setSubtitle();
             }
         };
+        var setSubtitle = function() {
+            var turn = game.startTurn();
+            var status = (turn.gameState === GAME_STATE_CONTINUE ?
+                'Turn ' + turn.turnNumber + ', ' +
+                (turn.turnPlayer === PLAYER_BLACK ? 'Black. ' : 'White. ') :
+                'Game Over. ');
+            var counts = "Black " + turn.counts[PLAYER_BLACK] + ", White " + turn.counts[PLAYER_WHITE];
+            subComp.setText(status + counts);
+        };
         var boardComp = React.render(<BoardComponent board={board} onPieceClickCallback={place} />, document.getElementById('content'));
-
+        setSubtitle();
         </script>
     </body>
 </html>
